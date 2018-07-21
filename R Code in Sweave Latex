@@ -1,0 +1,69 @@
+\documentclass{article}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+A.
+<<reference1,echo=TRUE,eval=TRUE,fig=TRUE>>=
+set.seed(596)
+p<-0.3
+f.mix <- function(x, y){
+ return((p*dnorm(x,100,13) +(1-p)* dnorm(x,125,13))*(p*dnorm(y,100,13)
+          +(1-p)* dnorm(y,125,13)))
+}
+y <- x <- seq(from=50, to=180, length=50)
+z <- outer(x, y, f.mix)
+persp(x,y,z)
+@
+
+<<reference7,echo=TRUE,eval=TRUE,fig=TRUE>>=
+M <- persp(x, y, z, theta = 30, phi=20, expand=0.6, ltheta=120, shade=0.75,
+           ticktype="detailed", xlab="norm.X", ylab="norm.Y", zlab="f(x,y)", 
+           col="red", main="joint Normal Density")
+@
+
+
+B.
+<<reference2,echo=TRUE,eval=TRUE,fig=TRUE>>=
+contour(z)
+@
+
+
+C.
+<<reference3,echo=TRUE,eval=TRUE,fig=TRUE>>=
+filled.contour(z, color.palette = terrain.colors)
+@
+
+
+D.
+<<reference4,echo=TRUE,eval=TRUE>>=
+pp<-rbinom(20000,1,0.3)
+x<-rep(NA,10000)
+y<-rep(NA,10000)
+for(i in 1:20000)
+{
+  if(i<10001){
+    if(pp[i]==1){x[i]<-rnorm(1,100,13)}
+    if(pp[i]==0){x[i]<-rnorm(1,125,13)}
+  }
+  if(i>10000){
+    if(pp[i]==1){y[i-10000]<-rnorm(1,100,13)}
+    if(pp[i]==0){y[i-10000]<-rnorm(1,125,13)}
+  }
+}
+pair<-matrix(NA,nrow=10000,ncol=2)
+for(i in 1:10000)
+{pair[i,1]<-x[i]
+ pair[i,2]<-y[i]
+}
+head(pair)
+@
+
+
+E
+<<reference5,echo=TRUE,eval=TRUE,fig=TRUE>>=
+install.packages("gplots",repos="http://cran.us.r-project.org")
+library(gplots)
+hist2d(pair, nbins=100, col=c("blue", rev(terrain.colors(100))))
+@
+\end{document}
